@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, CardContent, Chip, Link, Stack, TextField, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, TextField, Typography } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { searchTools, tools } from '../tools/registry';
@@ -8,8 +8,6 @@ export function HomePage() {
   const searchRef = useRef<HTMLInputElement>(null);
   const matches = useMemo(() => searchTools(query), [query]);
   const categories = useMemo(() => groupByCategory(matches), [matches]);
-  const recentTools = useMemo(() => [...tools].sort((a, b) => getSortDate(b).localeCompare(getSortDate(a))).slice(0, 3), []);
-
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
@@ -24,16 +22,16 @@ export function HomePage() {
   }, []);
 
   return (
-    <Stack spacing={{ xs: 2, md: 3 }}>
+    <Box sx={{ display: 'grid', gap: { xs: 2, md: 3 } }}>
       <Box sx={{ display: 'grid', gap: 1 }}>
         <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: '.12em' }}>
-          Private browser utilities
+          Browser-only utilities
         </Typography>
         <Typography variant="h1" sx={{ fontSize: { xs: '2.35rem', md: '4.8rem' }, lineHeight: 0.95 }}>
           Tools Workshop
         </Typography>
         <Typography color="text.secondary" sx={{ maxWidth: 720 }}>
-          {String(tools.length)} local-only tools for Markdown, HTML, clipboard diagnostics, and browser-safe conversion. Press / to search.
+          Paste, convert, inspect, and copy without uploads. {String(tools.length)} tools run entirely in this browser tab.
         </Typography>
       </Box>
 
@@ -46,12 +44,9 @@ export function HomePage() {
         fullWidth
       />
 
-      <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
-        <Chip label={`${String(matches.length)} of ${String(tools.length)} tools`} variant="outlined" />
-        {recentTools.map((tool) => (
-          <Chip key={tool.slug} label={`New: ${tool.title}`} component={RouterLink} to={`/${tool.slug}`} clickable />
-        ))}
-      </Stack>
+      <Typography variant="body2" color="text.secondary">
+        Showing {String(matches.length)} of {String(tools.length)} tools. Press / to search.
+      </Typography>
 
       {matches.length === 0 ? (
         <Card variant="outlined">
@@ -61,7 +56,7 @@ export function HomePage() {
           </CardContent>
         </Card>
       ) : (
-        <Stack spacing={2}>
+        <Box sx={{ display: 'grid', gap: 2 }}>
           {categories.map(([category, categoryTools]) => (
             <Box key={category} component="section" aria-labelledby={`${category.toLowerCase()}-tools`}>
               <Typography id={`${category.toLowerCase()}-tools`} component="h2" variant="h5" sx={{ mb: 1 }}>
@@ -81,11 +76,9 @@ export function HomePage() {
                           </Typography>
                         </Box>
                         <Typography color="text.secondary">{tool.description}</Typography>
-                        <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexWrap: 'wrap', justifyContent: { md: 'flex-end' } }}>
-                          {tool.keywords.slice(0, 3).map((keyword) => (
-                            <Chip key={keyword} label={keyword} size="small" variant="outlined" />
-                          ))}
-                        </Stack>
+                        <Typography variant="caption" color="text.secondary" sx={{ justifySelf: { md: 'end' } }}>
+                          {tool.category}
+                        </Typography>
                       </CardContent>
                     </CardActionArea>
                   </Card>
@@ -93,14 +86,17 @@ export function HomePage() {
               </Box>
             </Box>
           ))}
-        </Stack>
+        </Box>
       )}
 
       <Typography variant="body2" color="text.secondary">
-        Inspired by dense personal toolboxes: compact links first, with every route running in this browser tab. Browse all source content under{' '}
-        <Link component={RouterLink} to="/markdown-to-html" color="inherit">/tools/</Link>.
+        Each route is a local workbench. Start with{' '}
+        <Typography component={RouterLink} to="/html-to-markdown" color="inherit" sx={{ textDecoration: 'underline' }}>
+          Rich HTML to Markdown
+        </Typography>
+        .
       </Typography>
-    </Stack>
+    </Box>
   );
 }
 
@@ -114,8 +110,4 @@ function groupByCategory(items: typeof tools) {
   }
 
   return Array.from(groups.entries());
-}
-
-function getSortDate(tool: (typeof tools)[number]) {
-  return tool.updated ?? tool.added;
 }

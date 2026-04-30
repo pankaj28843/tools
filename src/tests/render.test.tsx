@@ -7,7 +7,7 @@ import MarkdownToHtmlTool from '../tools/markdown-to-html/Tool';
 import HtmlToMarkdownTool from '../tools/html-to-markdown/Tool';
 
 describe('rendering', () => {
-  it('renders the dense home page index', () => {
+  it('renders the focused home page index', () => {
     render(
       <MemoryRouter>
         <HomePage />
@@ -15,7 +15,7 @@ describe('rendering', () => {
     );
     expect(screen.getByRole('heading', { name: /tools workshop/i })).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: /markdown to rich html/i }).length).toBeGreaterThan(0);
-    expect(screen.getByText(/3 of 3 tools/i)).toBeInTheDocument();
+    expect(screen.getByText(/showing 3 of 3 tools/i)).toBeInTheDocument();
   });
 
   it('renders markdown tool controls', () => {
@@ -35,8 +35,9 @@ describe('rendering', () => {
       </MemoryRouter>,
     );
     expect(screen.getByLabelText(/rich html editor/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/html source/i)).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: /markdown output/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /copy markdown/i })).toBeInTheDocument();
+    expect(screen.getByText(/show source/i)).toBeInTheDocument();
   });
 
   it('renders clipboard inspector controls and paste diagnostics', () => {

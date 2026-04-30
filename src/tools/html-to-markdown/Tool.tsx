@@ -17,7 +17,7 @@ export default function HtmlToMarkdownTool() {
   const editorId = useId();
   const editorRef = useRef<TrixEditorElement | null>(null);
   const [html, setHtml] = useState(sampleHtml);
-  const [hideSource, setHideSource] = useState(false);
+  const [showSource, setShowSource] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const markdown = useMemo(() => convertHtmlToMarkdown(html), [html]);
   const sanitizedHtml = useMemo(() => sanitizeInputHtml(html), [html]);
@@ -32,9 +32,26 @@ export default function HtmlToMarkdownTool() {
     const nextHtml = editorRef.current?.innerHTML;
 
     if (nextHtml) {
-      setHtml(sanitizeInputHtml(nextHtml));
+      const safeHtml = sanitizeInputHtml(nextHtml);
+      setHtml(safeHtml);
+
+      if (safeHtml !== nextHtml) {
+        editorRef.current?.editor?.loadHTML(safeHtml);
+      }
     }
   }, []);
+
+  const handleEditorPaste = useCallback((event: ClipboardEvent) => {
+    const pastedHtml = event.clipboardData?.getData('text/html');
+    const pastedText = event.clipboardData?.getData('text/plain');
+
+    if (!pastedHtml && !pastedText) return;
+
+    event.preventDefault();
+    replaceEditorHtml(pastedHtml ?? `<p>${escapeHtml(pastedText ?? '').replaceAll('\n', '<br>')}</p>`);
+    editorRef.current?.focus();
+    window.setTimeout(syncEditorHtml);
+  }, [replaceEditorHtml, syncEditorHtml]);
 
 
   useEffect(() => {
@@ -68,26 +85,35 @@ export default function HtmlToMarkdownTool() {
     };
   }, [replaceEditorHtml, syncEditorHtml]);
 
+  useEffect(() => {
+    const editor = editorRef.current;
+    editor?.addEventListener('paste', handleEditorPaste);
+
+    const toolbar = editor?.toolbarElement;
+    toolbar?.setAttribute('aria-hidden', 'true');
+    toolbar?.querySelectorAll('button,input').forEach((element) => {
+      element.setAttribute('tabindex', '-1');
+    });
+
+    return () => {
+      editor?.removeEventListener('paste', handleEditorPaste);
+    };
+  }, [handleEditorPaste]);
+
   const sourcePane = (
     <Stack spacing={2}>
       <Card
         variant="outlined"
         sx={{
           '& trix-toolbar': {
-            borderColor: 'divider',
-            borderRadius: 2,
-            mb: 1,
-            overflowX: 'auto',
-            overflowY: 'hidden',
+            display: 'none',
           },
-          '& trix-toolbar .trix-button-row': { flexWrap: 'wrap' },
-          '& trix-button-group': { borderColor: 'divider', flexShrink: 1, minWidth: 0 },
-          '& trix-button': { bgcolor: 'background.paper' },
-          '& trix-button--icon': { width: 34, maxWidth: '12.5%' },
           '& trix-editor': {
             minHeight: 260,
             borderColor: 'divider',
             borderRadius: 2,
+            bgcolor: 'background.paper',
+            color: 'text.primary',
             fontFamily: 'inherit',
             fontSize: '1rem',
             lineHeight: 1.65,
@@ -105,18 +131,20 @@ export default function HtmlToMarkdownTool() {
           })}
         </CardContent>
       </Card>
-      <Card variant="outlined" sx={{ height: '100%' }}>
-        <CardContent sx={{ height: '100%' }}>
-          <TextField
-            label="HTML source"
-            value={html}
-            onChange={(event) => { replaceEditorHtml(event.target.value); }}
-            multiline
-            minRows={10}
-            fullWidth
-          />
-        </CardContent>
-      </Card>
+      {showSource ? (
+        <Card variant="outlined" sx={{ height: '100%' }}>
+          <CardContent sx={{ height: '100%' }}>
+            <TextField
+              value={html}
+              onChange={(event) => { replaceEditorHtml(event.target.value); }}
+              multiline
+              minRows={8}
+              fullWidth
+              slotProps={{ htmlInput: { 'aria-label': 'Sanitized HTML source' } }}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
     </Stack>
   );
 
@@ -125,11 +153,12 @@ export default function HtmlToMarkdownTool() {
       <CardContent>
         {showPreview ? (
           <Box
+            aria-label="Sanitized HTML preview"
             sx={{ '& pre': { p: 2, overflow: 'auto', borderRadius: 2, bgcolor: 'action.hover' } }}
             dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
           />
         ) : (
-          <TextField label="Markdown output" value={markdown} multiline minRows={22} fullWidth slotProps={{ input: { readOnly: true } }} />
+          <TextField value={markdown} multiline minRows={22} fullWidth slotProps={{ htmlInput: { 'aria-label': 'Markdown output' }, input: { readOnly: true } }} />
         )}
       </CardContent>
     </Card>
@@ -139,13 +168,13 @@ export default function HtmlToMarkdownTool() {
     <ToolPageLayout title={metadata.title} description={metadata.description} keywords={metadata.keywords}>
       <Stack className="no-print" direction="row" spacing={{ xs: 0.75, sm: 1.5 }} useFlexGap sx={{ position: { xs: 'sticky', sm: 'static' }, top: { xs: 45, sm: 'auto' }, zIndex: 1, py: { xs: 0.5, sm: 0 }, bgcolor: 'background.default', flexWrap: 'wrap', alignItems: 'center' }}>
         <Button variant="contained" size="small" onClick={() => { editorRef.current?.focus(); }}>
-          Paste anywhere
+          Paste HTML
         </Button>
-        <CopyButton label="Copy HTML" size="small" getText={() => html} />
         <CopyButton label="Copy Markdown" size="small" getText={() => markdown} />
+        <CopyButton label="Copy HTML" size="small" getText={() => html} />
         <FormControlLabel
-          control={<Switch checked={hideSource} onChange={(event) => { setHideSource(event.target.checked); }} />}
-          label={hideSource ? 'Source hidden' : 'Show source'}
+          control={<Switch checked={showSource} onChange={(event) => { setShowSource(event.target.checked); }} />}
+          label={showSource ? 'Hide source' : 'Show source'}
         />
         <Button
           size="small"
@@ -155,14 +184,13 @@ export default function HtmlToMarkdownTool() {
         </Button>
       </Stack>
       <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>
-        Paste rich text anywhere in the window, edit it with the rich toolbar, then copy clean Markdown. Everything stays local and sanitized.
+        Paste rich HTML, copy clean Markdown. Everything stays local and sanitized.
       </Typography>
       <ToolWorkspace
         left={sourcePane}
         right={outputPane}
         leftLabel="HTML editor"
-        rightLabel="Markdown output"
-        hideLeft={hideSource}
+        rightLabel={showPreview ? 'Sanitized HTML preview' : 'Markdown output'}
       />
     </ToolPageLayout>
   );
@@ -181,4 +209,5 @@ type TrixEditorElement = HTMLElement & {
   editor?: {
     loadHTML(html?: string): void;
   };
+  toolbarElement?: HTMLElement;
 };

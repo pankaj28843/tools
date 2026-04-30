@@ -73,7 +73,7 @@ export default function MarkdownToHtmlTool() {
         </Button>
       </Stack>
       <Typography variant="body2" color="text.secondary">
-        PDF export uses your browser print dialog so content never leaves this page.
+        Preview sanitized HTML and export with your browser print dialog. No uploads.
       </Typography>
       <ToolWorkspace
         left={sourcePane}

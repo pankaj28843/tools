@@ -46,13 +46,13 @@ export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightL
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 0.9fr) 1px minmax(0, 1.1fr)',
-        gap: 2,
+        gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 0.9fr) 1px minmax(0, 1.1fr)' },
+        gap: { xs: 1.25, md: 2 },
         minHeight: 620,
       }}
     >
       {leftRegion}
-      <Box aria-hidden="true" sx={{ bgcolor: 'divider' }} />
+      <Box aria-hidden="true" sx={{ display: { xs: 'none', md: 'block' }, bgcolor: 'divider' }} />
       {rightRegion}
     </Box>
   );

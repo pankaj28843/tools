@@ -17,12 +17,12 @@ export function AppShell({ children, mode, onModeChange }: AppShellProps) {
         minHeight: '100vh',
         bgcolor: 'background.default',
         color: 'text.primary',
-        borderTop: 4,
-        borderColor: theme.palette.primary.main,
+        borderTop: { xs: 0, sm: 3 },
+        borderColor: theme.palette.mode === 'dark' ? 'primary.main' : 'secondary.main',
       })}
     >
       <Header mode={mode} onModeChange={onModeChange} />
-      <Container component="main" maxWidth="lg" sx={{ py: { xs: 1, md: 6 }, px: { xs: 1, sm: 3 } }}>
+      <Container component="main" maxWidth="lg" sx={{ py: { xs: 1.25, md: 4 }, px: { xs: 1.25, sm: 3 } }}>
         {children}
       </Container>
       <Footer />
