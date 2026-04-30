@@ -7,13 +7,18 @@ describe('tool registry', () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
-  it('keeps required initial routes stable', () => {
-    expect(tools.map((tool) => `/tools/${tool.slug}`)).toEqual(['/tools/markdown-to-html', '/tools/html-to-markdown']);
+  it('keeps required routes stable', () => {
+    expect(tools.map((tool) => `/tools/${tool.slug}`)).toEqual(['/tools/markdown-to-html', '/tools/html-to-markdown', '/tools/clipboard-inspector']);
   });
 
-  it('searches title, slug, description, and keywords', () => {
+  it('requires discovery metadata', () => {
+    expect(tools.every((tool) => tool.category && tool.added)).toBe(true);
+  });
+
+  it('searches title, slug, description, category, and keywords', () => {
     expect(searchTools('gfm')).toHaveLength(1);
     expect(searchTools('html-to-markdown')[0]?.slug).toBe('html-to-markdown');
-    expect(searchTools('html')).toHaveLength(2);
+    expect(searchTools('html')).toHaveLength(3);
+    expect(searchTools('diagnostics')[0]?.slug).toBe('clipboard-inspector');
   });
 });

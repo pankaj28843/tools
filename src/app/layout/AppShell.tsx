@@ -22,7 +22,7 @@ export function AppShell({ children, mode, onModeChange }: AppShellProps) {
       })}
     >
       <Header mode={mode} onModeChange={onModeChange} />
-      <Container component="main" maxWidth="lg" sx={{ py: { xs: 1.5, md: 6 }, px: { xs: 1.5, sm: 3 } }}>
+      <Container component="main" maxWidth="lg" sx={{ py: { xs: 1, md: 6 }, px: { xs: 1, sm: 3 } }}>
         {children}
       </Container>
       <Footer />

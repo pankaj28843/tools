@@ -62,6 +62,17 @@ cdp layout overflow --help
 cdp page cleanup --help
 ```
 
+## Repeatable Visual Route Diagnostics
+
+Start Vite, then pass the printed origin to the visual route helper:
+
+```bash
+pnpm run dev
+pnpm run visual:routes -- http://127.0.0.1:5173
+```
+
+The script captures desktop and mobile diagnostics for `/tools/`, `/tools/markdown-to-html`, `/tools/html-to-markdown`, and `/tools/clipboard-inspector`. Artifacts stay under `tmp/visual-runs/<timestamp>/` with `summary.json` and `summary.md`.
+
 ## Cleanup
 
 Always close CDP-opened tabs when done:

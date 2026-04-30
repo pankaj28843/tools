@@ -5,6 +5,9 @@ export type ToolMetadata = {
   title: string;
   description: string;
   keywords: string[];
+  category: string;
+  added: string;
+  updated?: string;
 };
 
 export type ToolDefinition = ToolMetadata & {

@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { metadata as clipboardInspector } from './clipboard-inspector/metadata';
 import { metadata as htmlToMarkdown } from './html-to-markdown/metadata';
 import { metadata as markdownToHtml } from './markdown-to-html/metadata';
 import type { ToolDefinition } from './types';
@@ -12,6 +13,10 @@ export const tools: ToolDefinition[] = [
     ...htmlToMarkdown,
     Component: lazy(() => import('./html-to-markdown/Tool')),
   },
+  {
+    ...clipboardInspector,
+    Component: lazy(() => import('./clipboard-inspector/Tool')),
+  },
 ];
 
 export function searchTools(query: string) {
@@ -19,6 +24,6 @@ export function searchTools(query: string) {
   if (!normalized) return tools;
 
   return tools.filter((tool) =>
-    [tool.title, tool.description, tool.slug, ...tool.keywords].some((value) => value.toLowerCase().includes(normalized)),
+    [tool.title, tool.description, tool.slug, tool.category, ...tool.keywords].some((value) => value.toLowerCase().includes(normalized)),
   );
 }

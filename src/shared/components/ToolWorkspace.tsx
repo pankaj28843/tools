@@ -15,9 +15,10 @@ export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightL
 
   const leftHeadingId = `${leftLabel.toLowerCase().replaceAll(' ', '-')}-region`;
   const rightHeadingId = `${rightLabel.toLowerCase().replaceAll(' ', '-')}-region`;
+  const headingSx = { mb: { xs: 0.75, md: 2 }, fontSize: { xs: '1rem', md: '1.25rem' } };
   const leftRegion = (
     <Box aria-labelledby={leftHeadingId} role="region" sx={{ minWidth: 0 }}>
-      <Typography id={leftHeadingId} component="h2" variant="h6" sx={{ mb: 2 }}>
+      <Typography id={leftHeadingId} component="h2" variant="h6" sx={headingSx}>
         {leftLabel}
       </Typography>
       {left}
@@ -25,7 +26,7 @@ export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightL
   );
   const rightRegion = (
     <Box aria-labelledby={rightHeadingId} role="region" sx={{ minWidth: 0 }}>
-      <Typography id={rightHeadingId} component="h2" variant="h6" sx={{ mb: 2 }}>
+      <Typography id={rightHeadingId} component="h2" variant="h6" sx={headingSx}>
         {rightLabel}
       </Typography>
       {right}
@@ -34,7 +35,7 @@ export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightL
 
   if (hideLeft || isMobile) {
     return (
-      <Box sx={{ display: 'grid', gap: 2 }}>
+      <Box sx={{ display: 'grid', gap: { xs: 1.25, md: 2 } }}>
         {!hideLeft && leftRegion}
         {rightRegion}
       </Box>

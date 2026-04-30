@@ -11,7 +11,7 @@ type HeaderProps = {
 export function Header({ mode, onModeChange }: HeaderProps) {
   return (
     <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      <Toolbar sx={{ gap: { xs: 1, sm: 2 }, minHeight: { xs: 48, sm: 64 }, px: { xs: 1, sm: 3 } }}>
+      <Toolbar sx={{ gap: { xs: 1, sm: 2 }, minHeight: { xs: 44, sm: 64 }, px: { xs: 1, sm: 3 } }}>
         <Button component={RouterLink} to="/" color="inherit" size="small">
           Tools
         </Button>

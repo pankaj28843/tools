@@ -5,4 +5,6 @@ export const metadata: ToolMetadata = {
   title: 'Markdown to Rich HTML',
   description: 'Preview GitHub Flavored Markdown and copy sanitized HTML without sending content anywhere.',
   keywords: ['markdown', 'html', 'preview', 'gfm', 'pdf'],
+  category: 'Conversion',
+  added: '2026-04-30',
 };

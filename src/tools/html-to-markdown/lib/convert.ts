@@ -15,5 +15,38 @@ export function sanitizeInputHtml(html: string) {
 }
 
 export function convertHtmlToMarkdown(html: string) {
-  return turndown.turndown(sanitizeInputHtml(html)).trim();
+  return turndown.turndown(normalizeEditorHtml(sanitizeInputHtml(html))).trim();
+}
+
+export function normalizeEditorHtml(html: string) {
+  const template = document.createElement('template');
+  template.innerHTML = html;
+
+  template.content.querySelectorAll('div').forEach((element) => {
+    if (element.attributes.length === 0 && isParagraphLikeDiv(element)) {
+      element.replaceWith(toElement('p', element));
+    }
+  });
+
+  template.content.querySelectorAll('p').forEach((element) => {
+    trimTrailingBreaks(element);
+  });
+
+  return template.innerHTML;
+}
+
+function isParagraphLikeDiv(element: Element) {
+  return !element.querySelector('address,article,aside,blockquote,details,dialog,div,dl,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,hr,main,nav,ol,p,pre,section,table,ul');
+}
+
+function toElement(tagName: string, source: Element) {
+  const element = document.createElement(tagName);
+  element.innerHTML = source.innerHTML;
+  return element;
+}
+
+function trimTrailingBreaks(element: Element) {
+  while (element.lastElementChild?.tagName === 'BR') {
+    element.lastElementChild.remove();
+  }
 }

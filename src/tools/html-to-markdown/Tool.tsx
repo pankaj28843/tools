@@ -137,7 +137,7 @@ export default function HtmlToMarkdownTool() {
 
   return (
     <ToolPageLayout title={metadata.title} description={metadata.description} keywords={metadata.keywords}>
-      <Stack className="no-print" direction="row" spacing={{ xs: 0.75, sm: 1.5 }} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'center' }}>
+      <Stack className="no-print" direction="row" spacing={{ xs: 0.75, sm: 1.5 }} useFlexGap sx={{ position: { xs: 'sticky', sm: 'static' }, top: { xs: 45, sm: 'auto' }, zIndex: 1, py: { xs: 0.5, sm: 0 }, bgcolor: 'background.default', flexWrap: 'wrap', alignItems: 'center' }}>
         <Button variant="contained" size="small" onClick={() => { editorRef.current?.focus(); }}>
           Paste anywhere
         </Button>
