@@ -1,0 +1,19 @@
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  .print-surface {
+    box-shadow: none !important;
+    border: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
