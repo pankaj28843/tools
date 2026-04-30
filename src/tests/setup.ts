@@ -7,3 +7,6 @@ class ResizeObserverMock {
 }
 
 globalThis.ResizeObserver = ResizeObserverMock;
+
+ElementInternals.prototype.setFormValue = () => undefined;
+ElementInternals.prototype.setValidity = () => undefined;

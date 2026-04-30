@@ -32,6 +32,7 @@ describe('rendering', () => {
         <HtmlToMarkdownTool />
       </MemoryRouter>,
     );
+    expect(screen.getByLabelText(/rich html editor/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/html source/i)).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: /markdown output/i })).toBeInTheDocument();
   });

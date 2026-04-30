@@ -11,22 +11,24 @@ type ToolPageLayoutProps = {
 
 export function ToolPageLayout({ title, description, keywords, children }: ToolPageLayoutProps) {
   return (
-    <Stack spacing={4}>
+    <Stack spacing={{ xs: 1.5, md: 4 }}>
       <Box>
-        <Button component={RouterLink} to="/" sx={{ mb: 2 }}>
-          Back to tools
-        </Button>
-        <Typography variant="h2" component="h1" sx={{ maxWidth: 900, fontSize: { xs: '2.6rem', md: '4rem' } }}>
+        <Stack direction="row" spacing={1} useFlexGap sx={{ alignItems: 'center', flexWrap: 'wrap', mb: { xs: 0.5, md: 2 } }}>
+          <Button component={RouterLink} to="/" size="small">
+            Back
+          </Button>
+          <Stack direction="row" spacing={0.75} useFlexGap sx={{ display: { xs: 'none', sm: 'flex' }, flexWrap: 'wrap' }}>
+            {keywords.map((keyword) => (
+              <Chip key={keyword} label={keyword} size="small" variant="outlined" />
+            ))}
+          </Stack>
+        </Stack>
+        <Typography variant="h2" component="h1" sx={{ maxWidth: 900, fontSize: { xs: '1.75rem', sm: '2.25rem', md: '4rem' }, lineHeight: { xs: 1.05, md: 1.08 } }}>
           {title}
         </Typography>
-        <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 760, mt: 1 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 760, mt: { xs: 0.5, md: 1 }, display: { xs: 'none', sm: 'block' } }}>
           {description}
         </Typography>
-        <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap', mt: 2 }}>
-          {keywords.map((keyword) => (
-            <Chip key={keyword} label={keyword} size="small" variant="outlined" />
-          ))}
-        </Stack>
       </Box>
       {children}
     </Stack>

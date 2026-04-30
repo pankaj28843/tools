@@ -41,6 +41,9 @@ importers:
       remark-gfm:
         specifier: latest
         version: 4.0.1
+      trix:
+        specifier: ^2.1.18
+        version: 2.1.18
       turndown:
         specifier: latest
         version: 7.2.4
@@ -2124,6 +2127,10 @@ packages:
 
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
+
+  trix@2.1.18:
+    resolution: {integrity: sha512-DWOdTsz3n9PO3YBc1R6pGh9MG1cXys/2+rouc/qsISncjc2MBew2UOW8nXh3NjUOjobKsXCIPR6LB02abg2EYg==}
+    engines: {node: '>= 18'}
 
   trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
@@ -4816,6 +4823,10 @@ snapshots:
       punycode: 2.3.1
 
   trim-lines@3.0.1: {}
+
+  trix@2.1.18:
+    dependencies:
+      dompurify: 3.4.1
 
   trough@2.2.0: {}
 

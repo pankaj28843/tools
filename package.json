@@ -25,6 +25,7 @@
     "react-router-dom": "latest",
     "rehype-sanitize": "latest",
     "remark-gfm": "latest",
+    "trix": "^2.1.18",
     "turndown": "latest",
     "turndown-plugin-gfm": "latest"
   },
