@@ -7,9 +7,10 @@ type ToolWorkspaceProps = {
   hideLeft?: boolean;
   leftLabel: string;
   rightLabel: string;
+  activePane?: 'input' | 'output';
 };
 
-export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightLabel }: ToolWorkspaceProps) {
+export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightLabel, activePane = 'input' }: ToolWorkspaceProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -33,13 +34,16 @@ export function ToolWorkspace({ left, right, hideLeft = false, leftLabel, rightL
     </Box>
   );
 
-  if (hideLeft || isMobile) {
+  if (isMobile) {
     return (
       <Box sx={{ display: 'grid', gap: { xs: 1.25, md: 2 } }}>
-        {!hideLeft && leftRegion}
-        {rightRegion}
+        {activePane === 'input' && !hideLeft ? leftRegion : rightRegion}
       </Box>
     );
+  }
+
+  if (hideLeft) {
+    return <Box sx={{ display: 'grid', gap: 2 }}>{rightRegion}</Box>;
   }
 
   return (

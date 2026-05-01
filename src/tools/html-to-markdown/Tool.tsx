@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, FormControlLabel, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Button, ButtonGroup, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
 import { createElement, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import 'trix';
 import 'trix/dist/trix.css';
@@ -8,17 +8,12 @@ import { ToolPageLayout } from '../../shared/components/ToolPageLayout';
 import { convertHtmlToMarkdown, sanitizeInputHtml } from './lib/convert';
 import { metadata } from './metadata';
 
-const sampleHtml = `<h1>Launch Note</h1>
-<p><strong>Everything converts locally.</strong> Paste rich HTML anywhere on the page, tune it in the rich editor, then copy Markdown.</p>
-<ul><li>Headings</li><li>Links like <a href="https://example.com">example</a></li><li><code>inline code</code></li></ul>
-<blockquote>HTML is treated as untrusted input.</blockquote>`;
-
 export default function HtmlToMarkdownTool() {
   const editorId = useId();
   const editorRef = useRef<TrixEditorElement | null>(null);
-  const [html, setHtml] = useState(sampleHtml);
+  const [html, setHtml] = useState('');
   const [showSource, setShowSource] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+  const [activePane, setActivePane] = useState<'input' | 'output'>('input');
   const markdown = useMemo(() => convertHtmlToMarkdown(html), [html]);
   const sanitizedHtml = useMemo(() => sanitizeInputHtml(html), [html]);
 
@@ -26,6 +21,7 @@ export default function HtmlToMarkdownTool() {
     const safeHtml = sanitizeInputHtml(nextHtml);
     setHtml(safeHtml);
     editorRef.current?.editor?.loadHTML(safeHtml);
+    setActivePane('output');
   }, []);
 
   const syncEditorHtml = useCallback(() => {
@@ -127,6 +123,7 @@ export default function HtmlToMarkdownTool() {
             ref: editorRef,
             input: editorId,
             'aria-label': 'Rich HTML editor',
+            placeholder: 'Paste rich HTML here...',
             onTrixChange: syncEditorHtml,
           })}
         </CardContent>
@@ -151,15 +148,14 @@ export default function HtmlToMarkdownTool() {
   const outputPane = (
     <Card className="print-surface" variant="outlined" sx={{ height: '100%' }}>
       <CardContent>
-        {showPreview ? (
-          <Box
-            aria-label="Sanitized HTML preview"
-            sx={{ '& pre': { p: 2, overflow: 'auto', borderRadius: 2, bgcolor: 'action.hover' } }}
-            dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
-          />
-        ) : (
-          <TextField value={markdown} multiline minRows={22} fullWidth slotProps={{ htmlInput: { 'aria-label': 'Markdown output' }, input: { readOnly: true } }} />
-        )}
+        <TextField
+          value={markdown}
+          placeholder="Markdown output appears here."
+          multiline
+          minRows={18}
+          fullWidth
+          slotProps={{ htmlInput: { 'aria-label': 'Markdown output' }, input: { readOnly: true } }}
+        />
       </CardContent>
     </Card>
   );
@@ -167,20 +163,17 @@ export default function HtmlToMarkdownTool() {
   return (
     <ToolPageLayout title={metadata.title} description={metadata.description} keywords={metadata.keywords}>
       <Stack className="no-print" direction="row" spacing={{ xs: 0.75, sm: 1.5 }} useFlexGap sx={{ position: { xs: 'sticky', sm: 'static' }, top: { xs: 45, sm: 'auto' }, zIndex: 1, py: { xs: 0.5, sm: 0 }, bgcolor: 'background.default', flexWrap: 'wrap', alignItems: 'center' }}>
-        <Button variant="contained" size="small" onClick={() => { editorRef.current?.focus(); }}>
-          Paste HTML
-        </Button>
+        <ButtonGroup size="small" variant="outlined" sx={{ display: { md: 'none' } }}>
+          <Button variant={activePane === 'input' ? 'contained' : 'outlined'} onClick={() => { setActivePane('input'); }}>
+            Input
+          </Button>
+          <Button variant={activePane === 'output' ? 'contained' : 'outlined'} onClick={() => { setActivePane('output'); }}>
+            Output
+          </Button>
+        </ButtonGroup>
         <CopyButton label="Copy Markdown" size="small" getText={() => markdown} />
-        <CopyButton label="Copy HTML" size="small" getText={() => html} />
-        <FormControlLabel
-          control={<Switch checked={showSource} onChange={(event) => { setShowSource(event.target.checked); }} />}
-          label={showSource ? 'Hide source' : 'Show source'}
-        />
-        <Button
-          size="small"
-          onClick={() => { setShowPreview((value) => !value); }}
-        >
-          {showPreview ? 'Show Markdown' : 'Preview sanitized HTML'}
+        <Button size="small" onClick={() => { setShowSource((value) => !value); }}>
+          {showSource ? 'Hide source' : 'Source'}
         </Button>
       </Stack>
       <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -190,7 +183,8 @@ export default function HtmlToMarkdownTool() {
         left={sourcePane}
         right={outputPane}
         leftLabel="HTML editor"
-        rightLabel={showPreview ? 'Sanitized HTML preview' : 'Markdown output'}
+        rightLabel="Markdown output"
+        activePane={activePane}
       />
     </ToolPageLayout>
   );

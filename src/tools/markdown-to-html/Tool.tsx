@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, FormControlLabel, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
@@ -9,11 +9,9 @@ import { ToolPageLayout } from '../../shared/components/ToolPageLayout';
 import { metadata } from './metadata';
 import { htmlDocumentFragment, sanitizeHtml } from './lib/convert';
 
-const sampleMarkdown = `# Field Notes\n\n- [x] Draft stays in the browser\n- [ ] Export the polished copy\n\n| Input | Output |\n| --- | --- |\n| Markdown | Sanitized HTML |\n\n> Good tools should feel like a quiet workbench.\n\n\`inline code\` and a fenced block:\n\n\`\`\`ts\nconst privateByDefault = true;\n\`\`\`\n`;
-
 export default function MarkdownToHtmlTool() {
-  const [markdown, setMarkdown] = useState(sampleMarkdown);
-  const [hideSource, setHideSource] = useState(false);
+  const [markdown, setMarkdown] = useState('');
+  const [activePane, setActivePane] = useState<'input' | 'output'>('input');
   const [readingMode, setReadingMode] = useState(false);
   const sanitizedSource = useMemo(() => sanitizeHtml(markdown), [markdown]);
   const copyableHtml = useMemo(() => htmlDocumentFragment(sanitizedSource), [sanitizedSource]);
@@ -24,9 +22,10 @@ export default function MarkdownToHtmlTool() {
         <TextField
           label="Markdown source"
           value={markdown}
+          placeholder="Paste Markdown here..."
           onChange={(event) => { setMarkdown(event.target.value); }}
           multiline
-          minRows={22}
+          minRows={18}
           fullWidth
         />
       </CardContent>
@@ -57,19 +56,22 @@ export default function MarkdownToHtmlTool() {
   return (
     <ToolPageLayout title={metadata.title} description={metadata.description} keywords={metadata.keywords}>
       <Stack className="no-print" direction="row" spacing={{ xs: 0.75, sm: 1.5 }} useFlexGap sx={{ position: { xs: 'sticky', sm: 'static' }, top: { xs: 45, sm: 'auto' }, zIndex: 1, py: { xs: 0.5, sm: 0 }, bgcolor: 'background.default', flexWrap: 'wrap', alignItems: 'center' }}>
-        <CopyButton label="Copy Markdown" getText={() => markdown} />
+        <ButtonGroup size="small" variant="outlined" sx={{ display: { md: 'none' } }}>
+          <Button variant={activePane === 'input' ? 'contained' : 'outlined'} onClick={() => { setActivePane('input'); }}>
+            Input
+          </Button>
+          <Button variant={activePane === 'output' ? 'contained' : 'outlined'} onClick={() => { setActivePane('output'); }}>
+            Output
+          </Button>
+        </ButtonGroup>
         <CopyButton label="Copy HTML" getText={() => copyableHtml} />
         <Button variant="contained" onClick={() => { window.print(); }}>
-          Print / Save PDF
+          Print
         </Button>
-        <FormControlLabel
-          control={<Switch checked={hideSource} onChange={(event) => { setHideSource(event.target.checked); }} />}
-          label={hideSource ? 'Source hidden' : 'Show source'}
-        />
         <Button
           onClick={() => { setReadingMode((value) => !value); }}
         >
-          {readingMode ? 'Desk view' : 'Read preview'}
+          {readingMode ? 'Desk' : 'Read'}
         </Button>
       </Stack>
       <Typography variant="body2" color="text.secondary">
@@ -80,7 +82,7 @@ export default function MarkdownToHtmlTool() {
         right={previewPane}
         leftLabel="Markdown editor"
         rightLabel="HTML preview"
-        hideLeft={hideSource}
+        activePane={activePane}
       />
     </ToolPageLayout>
   );

@@ -37,7 +37,7 @@ describe('rendering', () => {
     expect(screen.getByLabelText(/rich html editor/i)).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: /markdown output/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /copy markdown/i })).toBeInTheDocument();
-    expect(screen.getByText(/show source/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /source/i })).toBeInTheDocument();
   });
 
   it('renders clipboard inspector controls and paste diagnostics', () => {
