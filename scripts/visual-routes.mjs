@@ -12,7 +12,7 @@ if (!baseUrl) {
 
 const timestamp = new Date().toISOString().replaceAll(':', '-').replaceAll('.', '-');
 const outDir = path.join('tmp', 'visual-runs', timestamp);
-const routes = ['/tools/', '/tools/markdown-to-html', '/tools/html-to-markdown', '/tools/clipboard-inspector'];
+const routes = ['/tools/', '/tools/markdown-to-html', '/tools/html-to-markdown', '/tools/clipboard-inspector', '/tools/base64'];
 const viewports = [
   { name: 'desktop', width: 1440, height: 1000, mobile: false },
   { name: 'mobile', width: 390, height: 844, mobile: true },

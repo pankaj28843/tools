@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { HomePage } from '../pages/HomePage';
+import Base64Tool from '../tools/base64/Tool';
 import ClipboardInspectorTool from '../tools/clipboard-inspector/Tool';
 import MarkdownToHtmlTool from '../tools/markdown-to-html/Tool';
 import HtmlToMarkdownTool from '../tools/html-to-markdown/Tool';
@@ -15,7 +16,8 @@ describe('rendering', () => {
     );
     expect(screen.getByRole('heading', { name: /tools workshop/i })).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: /markdown to rich html/i }).length).toBeGreaterThan(0);
-    expect(screen.getByText(/showing 3 of 3 tools/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /base64 encode \/ decode/i }).length).toBeGreaterThan(0);
+    expect(screen.getByText(/showing 4 of 4 tools/i)).toBeInTheDocument();
   });
 
   it('renders markdown tool controls', () => {
@@ -38,6 +40,20 @@ describe('rendering', () => {
     expect(screen.getByRole('textbox', { name: /markdown output/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /copy markdown/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /source/i })).toBeInTheDocument();
+  });
+
+  it('renders Base64 controls and converts text', () => {
+    render(
+      <MemoryRouter>
+        <Base64Tool />
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByRole('textbox', { name: /text input/i }), { target: { value: 'Hello' } });
+
+    expect(screen.getByRole('textbox', { name: /base64 output/i })).toHaveValue('SGVsbG8=');
+    expect(screen.getByRole('button', { name: /decode/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /copy output/i })).toBeInTheDocument();
   });
 
   it('renders clipboard inspector controls and paste diagnostics', () => {

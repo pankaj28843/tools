@@ -8,11 +8,13 @@ This is the canonical repo instruction file. `CLAUDE.md` is a symlink for Claude
 
 Tools Workshop is a public GitHub Pages, browser-only React + TypeScript + Vite + MUI SPA hosted at `https://pankaj28843.github.io/tools/`.
 
-The platform provides fast, privacy-preserving utilities with clean routes under `/tools/<tool-slug>`. Initial routes:
+The platform provides fast, privacy-preserving utilities with clean routes under `/tools/<tool-slug>`. Current routes:
 
 - `/tools/` — searchable tool index.
 - `/tools/markdown-to-html` — Markdown to sanitized rich HTML preview/export.
 - `/tools/html-to-markdown` — sanitized HTML to Markdown converter.
+- `/tools/clipboard-inspector` — paste-event diagnostics for plain text, rich HTML, and sanitized HTML.
+- `/tools/base64` — local Base64 encode/decode for UTF-8 text.
 
 No user-entered content may be sent to a backend, external API, telemetry service, or analytics endpoint.
 
@@ -68,7 +70,7 @@ Before relying on a subcommand, inspect help:
 docsearch <command> --help
 ```
 
-Prefer JSON output when comparing results. Use `docsearch search-all` when unsure which tenant contains the answer. Use `docsearch fetch` for full source documentation. Record useful commands in `docs/DOCSEARCH_WORKFLOW.md`.
+Prefer JSON output when comparing results. Use `docsearch search-all` when unsure which tenant contains the answer. Use `docsearch fetch` for full source documentation. For browser text transforms, verify platform edge cases with docsearch or MDN sources first; for Base64, avoid direct Unicode `btoa(value)`/`atob(value)` flows and use UTF-8 bytes via `TextEncoder`/`TextDecoder`. Record useful commands in `docs/DOCSEARCH_WORKFLOW.md`.
 
 ## Browser Validation Workflow
 
@@ -83,7 +85,7 @@ cdp doctor --json
 cdp workflow --help
 ```
 
-Validate `/tools/`, `/tools/markdown-to-html`, and `/tools/html-to-markdown` before considering UI work complete. Check deep-link refresh, console errors, failed network requests, unexpected external calls, mobile layout, accessibility tree, performance, dark mode, copy buttons, print/PDF behavior, and hide-source/read-preview modes.
+Validate `/tools/`, `/tools/markdown-to-html`, `/tools/html-to-markdown`, `/tools/clipboard-inspector`, and `/tools/base64` before considering UI work complete. Check deep-link refresh, console errors, failed network requests, unexpected external calls, mobile layout, accessibility tree, performance, dark mode, copy buttons, print/PDF behavior, hide-source/read-preview modes, and Base64 encode/decode invalid-input feedback.
 
 Clean up CDP-opened tabs when finished, e.g. after confirming syntax:
 
@@ -126,6 +128,7 @@ Principles from the docsearch architecture and clean-code sources are enforced b
 
 - Treat Markdown and pasted HTML as untrusted input.
 - Sanitize rendered HTML before any `dangerouslySetInnerHTML` usage.
+- For Base64/text encoding tools, support UTF-8 text with `TextEncoder`/`TextDecoder`, handle invalid input as UI state instead of thrown render errors, and state clearly that encoding is not encryption.
 - Do not send user content over the network.
 - Do not add telemetry or persistent user-content storage unless maintainers explicitly request it.
 - Prefer well-maintained browser-compatible libraries and platform APIs.
@@ -143,10 +146,10 @@ Principles from the docsearch architecture and clean-code sources are enforced b
 
 Maintain tests for:
 
-- Conversion logic for both initial tools.
+- Conversion logic for every tool with pure transform helpers, including Markdown/HTML, clipboard inspection, and Base64.
 - Home page and tool page rendering.
 - Registry behavior and metadata validity.
-- Route stability for `/tools/`, `/tools/markdown-to-html`, and `/tools/html-to-markdown`.
+- Route stability for `/tools/`, `/tools/markdown-to-html`, `/tools/html-to-markdown`, `/tools/clipboard-inspector`, and `/tools/base64`.
 - GitHub Pages base-path assumptions where practical.
 
 Before finalizing meaningful changes, run typecheck, lint, tests, build, and CDP validation when UI behavior is affected.

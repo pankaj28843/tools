@@ -1,9 +1,29 @@
 import { describe, expect, it } from 'vitest';
+import { decodeBase64Text, encodeBase64Text, normalizeBase64 } from '../tools/base64/lib/convert';
 import { inspectClipboardData, sanitizeClipboardHtml } from '../tools/clipboard-inspector/lib/inspect';
 import { convertHtmlToMarkdown, normalizeEditorHtml, sanitizeInputHtml } from '../tools/html-to-markdown/lib/convert';
 import { sanitizeHtml } from '../tools/markdown-to-html/lib/convert';
 
 describe('conversion safety', () => {
+  it('encodes and decodes Base64 text', () => {
+    expect(encodeBase64Text('Hello, Tools Workshop.')).toBe('SGVsbG8sIFRvb2xzIFdvcmtzaG9wLg==');
+    expect(decodeBase64Text('SGVsbG8sIFRvb2xzIFdvcmtzaG9wLg==')).toEqual({ ok: true, text: 'Hello, Tools Workshop.' });
+  });
+
+  it('round-trips Unicode Base64 text as UTF-8', () => {
+    const input = 'Grüße 👋 नमस्ते';
+    expect(decodeBase64Text(encodeBase64Text(input))).toEqual({ ok: true, text: input });
+  });
+
+  it('normalizes whitespace and URL-safe Base64 before decoding', () => {
+    expect(normalizeBase64('SGVs\nbG8s IFdvcmt\tzc2hvcC4=')).toBe('SGVsbG8sIFdvcmtzc2hvcC4=');
+    expect(decodeBase64Text('SGVsbG8tXw')).toEqual({ ok: true, text: 'Hello-_' });
+  });
+
+  it('returns a friendly error for invalid Base64 input', () => {
+    expect(decodeBase64Text('not base64!!!!')).toMatchObject({ ok: false });
+  });
+
   it('sanitizes script tags from markdown-derived html', () => {
     expect(sanitizeHtml('<p>Hello</p><script>alert(1)</script>')).toBe('<p>Hello</p>');
   });

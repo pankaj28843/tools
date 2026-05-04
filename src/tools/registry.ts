@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { metadata as base64 } from './base64/metadata';
 import { metadata as clipboardInspector } from './clipboard-inspector/metadata';
 import { metadata as htmlToMarkdown } from './html-to-markdown/metadata';
 import { metadata as markdownToHtml } from './markdown-to-html/metadata';
@@ -16,6 +17,10 @@ export const tools: ToolDefinition[] = [
   {
     ...clipboardInspector,
     Component: lazy(() => import('./clipboard-inspector/Tool')),
+  },
+  {
+    ...base64,
+    Component: lazy(() => import('./base64/Tool')),
   },
 ];
 

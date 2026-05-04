@@ -31,14 +31,14 @@ export function HomePage() {
           Tools Workshop
         </Typography>
         <Typography color="text.secondary" sx={{ maxWidth: 720 }}>
-          Paste, convert, inspect, and copy without uploads. {String(tools.length)} tools run entirely in this browser tab.
+          Encode, decode, convert, inspect, and copy without uploads. {String(tools.length)} tools run entirely in this browser tab.
         </Typography>
       </Box>
 
       <TextField
         inputRef={searchRef}
         label="Search tools"
-        placeholder="Try markdown, clipboard, sanitize, PDF..."
+        placeholder="Try base64, markdown, clipboard, encode, sanitize..."
         value={query}
         onChange={(event) => { setQuery(event.target.value); }}
         fullWidth
@@ -52,7 +52,7 @@ export function HomePage() {
         <Card variant="outlined">
           <CardContent>
             <Typography variant="h5">No tools match that search.</Typography>
-            <Typography color="text.secondary">Try markdown, HTML, clipboard, preview, PDF, or converter.</Typography>
+            <Typography color="text.secondary">Try Base64, Markdown, HTML, clipboard, encode, decode, or diagnostics.</Typography>
           </CardContent>
         </Card>
       ) : (
@@ -91,8 +91,8 @@ export function HomePage() {
 
       <Typography variant="body2" color="text.secondary">
         Each route is a local workbench. Start with{' '}
-        <Typography component={RouterLink} to="/html-to-markdown" color="inherit" sx={{ textDecoration: 'underline' }}>
-          Rich HTML to Markdown
+        <Typography component={RouterLink} to="/base64" color="inherit" sx={{ textDecoration: 'underline' }}>
+          Base64 Encode / Decode
         </Typography>
         .
       </Typography>

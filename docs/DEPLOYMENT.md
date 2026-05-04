@@ -11,6 +11,8 @@ React Router uses basename `/tools`, so routes are:
 - `/tools/`
 - `/tools/markdown-to-html`
 - `/tools/html-to-markdown`
+- `/tools/clipboard-inspector`
+- `/tools/base64`
 
 ## SPA Fallback
 

@@ -30,6 +30,8 @@ Validate these URLs using the printed server origin plus route path:
 - `/tools/`
 - `/tools/markdown-to-html`
 - `/tools/html-to-markdown`
+- `/tools/clipboard-inspector`
+- `/tools/base64`
 
 Check:
 
@@ -45,6 +47,7 @@ Check:
 - Print/PDF behavior.
 - Side-by-side desktop workspace.
 - Hide-source/read-preview modes.
+- Base64 encode/decode, invalid input feedback, swap, clear, and copy output.
 
 ## Useful Commands
 
@@ -71,7 +74,7 @@ pnpm run dev
 pnpm run visual:routes -- http://127.0.0.1:5173
 ```
 
-The script captures desktop and mobile diagnostics for `/tools/`, `/tools/markdown-to-html`, `/tools/html-to-markdown`, and `/tools/clipboard-inspector`. Artifacts stay under `tmp/visual-runs/<timestamp>/` with `summary.json` and `summary.md`.
+The script captures desktop and mobile diagnostics for `/tools/`, `/tools/markdown-to-html`, `/tools/html-to-markdown`, `/tools/clipboard-inspector`, and `/tools/base64`. Artifacts stay under `tmp/visual-runs/<timestamp>/` with `summary.json` and `summary.md`.
 
 ## Cleanup
 

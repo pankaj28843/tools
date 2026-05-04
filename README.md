@@ -1,13 +1,15 @@
 # Tools Workshop
 
-Tools Workshop is a browser-only React application for privacy-preserving text utilities at `https://pankaj28843.github.io/tools/`.
+Tools Workshop is a browser-only React application for privacy-preserving utilities at `https://pankaj28843.github.io/tools/`.
 
-The initial tools are:
+Current tools include:
 
 - Markdown to Rich HTML Preview: `/tools/markdown-to-html`
 - Rich HTML to Markdown Converter: `/tools/html-to-markdown`
+- Clipboard Inspector: `/tools/clipboard-inspector`
+- Base64 Encode / Decode: `/tools/base64`
 
-No conversion work uses a backend or external API. User content stays in the browser.
+No tool uses a backend or external API for user-entered content. User content stays in the browser.
 
 ## Stack
 
@@ -59,5 +61,6 @@ Deployment requires GitHub Pages source set to GitHub Actions in repository sett
 
 - No backend or conversion API calls.
 - No telemetry.
+- Base64 is reversible encoding, not encryption; do not treat encoded values as secrets.
 - Untrusted Markdown/HTML is sanitized before previewing rendered HTML.
 - Temporary validation artifacts belong in `tmp/` and should not be committed.
